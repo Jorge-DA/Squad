@@ -1,17 +1,39 @@
+import { CallbackError, Document, Model, model, Schema } from 'mongoose';
+import { Secret, sign } from 'jsonwebtoken';
+import validate from 'deep-email-validator';
 import bcryptjs from 'bcryptjs';
-import { Document, model, Schema } from 'mongoose';
+import dayjs from 'dayjs';
 
-import config from '../config/config';
+import { ImageSchema, IImage } from './image';
+import { config } from '../config/config';
+import { roleIncludes } from '../services/roles';
 
 export interface IUser extends Document {
     readonly nickname: string;
+    readonly email: string;
     readonly sub?: string;
+    readonly image: IImage;
     password?: string;
-    readonly role: number;
-    comparePassword: Function;
+    role?: number;
+    roles?: string[];
+    comparePassword(password: string): boolean;
+    createToken(): string;
+    roleIncludes(roles: string | string[]): boolean;
 }
 
-const userSchema = new Schema<IUser>({
+export interface IUserModel extends Model<IUser> {
+
+}
+
+export interface Token {
+    sub: string;
+    nickname: string;
+    role: number;
+    iat?: number;
+    exp?: number;
+}
+
+const userSchema = new Schema<IUser, IUserModel>({
     nickname: {
         type: String,
         required: true,
@@ -19,6 +41,23 @@ const userSchema = new Schema<IUser>({
         lowercase: true,
         unique: true
     },
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+        unique: true,
+        validate: {
+            async validator(email: string): Promise<boolean> {
+                return await validate({ email, validateSMTP: false })
+                    .then(({ valid }) => valid)
+                    .catch(err => { throw err; });
+            },
+            message: ({ value }: { value: string }) => `${value} Isn´t an email.`,
+            reason: 'Invalid Email',
+        },
+    },
+    image: ImageSchema,
     password: {
         type: String,
         required: true,
@@ -29,23 +68,43 @@ const userSchema = new Schema<IUser>({
         default: config.AUTH.READ | config.AUTH.WRITE,
         required: true,
     }
+}, {
+    autoIndex: true,
 });
 
 /*------------------------------------------------------------------*/
 
-userSchema.pre<IUser>('save', async function (next: Function) {
-    const user = this;
-    if (!user.isModified('password')) return next();
+userSchema.pre('save', async function (next: (err?: CallbackError) => void) {
+    if (!this.isModified('password')) return next();
     const salt = await bcryptjs.genSalt(config.KEY.SALT);
-    user.password = await bcryptjs.hash(<string>user.password, salt);
+    this.password = await bcryptjs.hash(<string>this.password, salt);
     return next();
 });
 
 
-userSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
-    return await bcryptjs.compareSync(password, <string>this.password);
+userSchema.methods.comparePassword = function (password: string): boolean {
+    console.log("Compare Password", this.password);
+
+    if (!password && !password.trim()) return false;
+    return bcryptjs.compareSync(password, <string>this.password);
 };
+
+userSchema.methods.createToken = function (): string {
+    const payload: Token = {
+        sub: this._id,
+        nickname: this.nickname,
+        role: <number>this.role,
+        iat: dayjs().unix(),
+        exp: dayjs().add(30, 'day').unix(),
+    }
+
+    return sign(payload, <Secret>config.KEY.SECRET);
+}
+
+userSchema.methods.roleIncludes = roleIncludes;
 
 /*------------------------------------------------------------------*/
 
-export default model<IUser>('User', userSchema);
+export const UserModel = model<IUser, IUserModel>('User', userSchema);
+
+UserModel.createIndexes();

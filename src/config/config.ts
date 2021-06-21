@@ -21,10 +21,10 @@ export default {
         GRANT: Number(process.env.AUTH_GRANT) || 16,
         ADMIN: Number(process.env.AUTH_ADMIN) || 32,
     },
-    // CLOUDINARY: {
-    //     ENV_VAR: process.env.CLOUDINARY_ENV_VAR,
-    //     NAME: process.env.CLOUDINARY_NAME,
-    //     KEY: process.env.CLOUDINARY_KEY,
-    //     SECRET: process.env.CLOUDINARY_SECRET,
-    // },
+    CLOUDINARY: {
+        ENV_VAR: process.env.CLOUDINARY_ENV_VAR,
+        NAME: process.env.CLOUDINARY_NAME,
+        KEY: process.env.CLOUDINARY_KEY,
+        SECRET: process.env.CLOUDINARY_SECRET,
+    },
 }
