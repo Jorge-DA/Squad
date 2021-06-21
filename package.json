@@ -24,7 +24,7 @@
     "license": "ISC",
     "dependencies": {
         "bcryptjs": "^2.4.3",
-        "cloudinary": "^1.25.0",
+        "cloudinary": "^1.26.0",
         "cors": "^2.8.5",
         "dayjs": "^1.8.28",
         "deep-email-validator": "^0.1.18",
