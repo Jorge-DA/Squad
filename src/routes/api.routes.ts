@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import * as userController from '../controllers/user';
-import { authAdmin, authorized } from '../middlewares/auth';
+import { authorized } from '../middlewares/auth';
 
 //*------------------------------------------------------------------*/
 // * Api Routes
@@ -13,7 +13,7 @@ const router = Router();
 //*------------------------------------------------------------------*/
 
 router.route('/register')
-    .post(authorized, authAdmin, userController.registerUser);
+    .post(authorized, userController.registerUser);
 
 router.route('/login')
     .post(userController.loginUser);
