@@ -14,7 +14,12 @@
         "name": "Cétr!co.Productions",
         "email": "p.roch@outlook.es"
     },
-    "contributors": [],
+    "contributors": [
+        {
+            "name": "Cétr!co.Productions",
+            "email": "p.roch@outlook.es"
+        }
+    ],
     "deprecated": false,
     "license": "ISC",
     "dependencies": {
