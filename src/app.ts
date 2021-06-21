@@ -6,7 +6,7 @@ import multer from 'multer';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-import config from './config/config';
+import { config } from './config/config';
 import api from './routes/api.routes';
 
 const app = express();
@@ -21,7 +21,7 @@ app.set('env', config.ENV);
 app.set('port', config.PORT);
 const storage = multer.diskStorage({
   destination: path.join(__dirname, 'uploads'),
-  filename: (req, file, cb) =>
+  filename: ({ }, file, cb) =>
     cb(null, uuidv4() + path.extname(file.originalname).toLowerCase()),
 });
 
@@ -40,16 +40,16 @@ app.use(
   multer({
     storage,
     dest: path.join(__dirname, 'uploads'),
-    fileFilter(req, file, cb: Function) {
+    fileFilter({ }, file, cb: multer.FileFilterCallback) {
       var filetypes = /jpeg|jpg|png|gif/;
       var mimetype = filetypes.test(file.mimetype);
       var extname = filetypes.test(
         path.extname(file.originalname).toLowerCase(),
       );
       if (mimetype && extname) return cb(null, true);
-      cb(`Error: File upload only supports the following filetypes - ${filetypes}`);
+      cb(new Error(`Error: File upload only supports the following filetypes - ${filetypes}`));
     },
-    limits: { fileSize: 1000000 },
+    limits: { fileSize: 10_000_000 },
   }).single('image'),
 );
 
