@@ -8,6 +8,8 @@ export interface IPost extends Document {
     readonly image: IImage;
     readonly author: IUser;
     readonly tags: ITag[];
+    readonly createdAt: Date;
+    readonly updatedAt: Date;
 }
 
 export interface IPostModel extends Model<IPost> {
@@ -48,6 +50,9 @@ const PostSchema = new Schema<IPost, IPostModel>({
             reason: 'Invalid Tag',
         },
     }],
+}, {
+    timestamps: true,
+    autoIndex: true,
 });
 
 /*------------------------------------------------------------------*/
