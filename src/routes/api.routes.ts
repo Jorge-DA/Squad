@@ -17,7 +17,7 @@ const router = Router();
 //*------------------------------------------------------------------*/
 
 router.route('/register')
-    .post(authorized, userController.registerUser);
+    .post(userController.registerUser);
 
 router.route('/login')
     .post(userController.loginUser);
