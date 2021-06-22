@@ -18,7 +18,7 @@ export interface IUser extends Document {
     roles?: string[];
     comparePassword(password: string): boolean;
     createToken(): string;
-    roleIncludes(roles: string | string[]): boolean;
+    roleIncludes(roles: 'READ' | 'WRITE' | 'EDIT' | 'GRANT' | 'ADMIN' | ('READ' | 'WRITE' | 'EDIT' | 'GRANT' | 'ADMIN')[]): boolean;
 }
 
 export interface IUserModel extends Model<IUser> {
