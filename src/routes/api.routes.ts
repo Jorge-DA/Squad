@@ -1,11 +1,15 @@
 import { Router } from 'express';
 
 import * as userController from '../controllers/user';
+import * as likeController from '../controllers/like';
+import * as postController from '../controllers/post';
+import * as tagController from '../controllers/tag';
 import { authorized } from '../middlewares/auth';
 
 //*------------------------------------------------------------------*/
 // * Api Routes
 //*------------------------------------------------------------------*/
+
 const router = Router();
 
 //*------------------------------------------------------------------*/
@@ -20,6 +24,36 @@ router.route('/login')
 
 router.route('/user')
     .get(authorized, userController.returnUser);
+
+//*------------------------------------------------------------------*/
+// * Like Routes
+//*------------------------------------------------------------------*/
+
+router.route('/like')
+    .get(likeController.getLike)
+    .put(likeController.toogleLike);
+
+//*------------------------------------------------------------------*/
+// * Post Routes
+//*------------------------------------------------------------------*/
+
+router.route('/post')
+    .post(postController.savePost)
+    .get(postController.listPostPage);
+
+router.route('/post/trends')
+    .get(postController.listPostTrends);
+
+//*------------------------------------------------------------------*/
+// * Tag Routes
+//*------------------------------------------------------------------*/
+
+router.route('/tag')
+    .post(tagController.saveTag)
+    .get(tagController.listTag);
+
+router.route('/tag/:page')
+    .get(tagController.listTagPage);
 
 /*------------------------------------------------------------------*/
 

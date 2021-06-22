@@ -17,8 +17,8 @@ v2.config({
 export async function savePost({ user, body, file }: Request, res: Response) {
     let result: UploadApiResponse;
 
-    if (!body || !user?.roleIncludes(['WRITE', 'EDIT', 'GRANT', 'ADMIN']))
-        return res.status(400).send({ message: 'Client has not sent params' });
+    // if (!body || !user?.roleIncludes(['WRITE', 'EDIT', 'GRANT', 'ADMIN']))
+    //     return res.status(400).send({ message: 'Client has not sent params' });
     if (file) try {
         result = await v2.uploader.upload(file.path, { folder: 'blog/posts' });
         body.image = <IImage>{ public_id: result.public_id, url: result.secure_url, }
