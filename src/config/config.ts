@@ -27,4 +27,8 @@ export const config = {
         KEY: process.env.CLOUDINARY_KEY,
         SECRET: process.env.CLOUDINARY_SECRET,
     },
+    LIMIT: {
+        TAG: 10,
+        POST: 20,
+    }
 } as const;
