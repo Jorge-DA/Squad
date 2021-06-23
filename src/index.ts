@@ -13,3 +13,6 @@ import { field, sep, title } from './config/fmt';
   field('\x1b[37mServer', `\x1b[33m${app.get('port')}\x1b[0m`);
   field('\x1b[37mStatus', `\x1b[33m${app.get('env')}\x1b[0m`);
 })();
+/**
+ * ya quedo wey     jjiji
+ */

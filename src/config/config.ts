@@ -4,7 +4,7 @@ dotenv.config();
 
 export const config = {
     ENV: process.env.NODE_ENV || 'development',
-    PORT: Number(process.env.PORT) || 4000,
+    PORT: Number(process.env.PORT) ||4000,
     KEY: {
         SECRET: process.env.SECRET_KEY || '//password',
         SALT: Number(process.env.SALT) || 11,
