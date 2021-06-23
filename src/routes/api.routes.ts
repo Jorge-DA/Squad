@@ -25,6 +25,9 @@ router.route('/login')
 router.route('/user')
     .get(authorized, userController.returnUser);
 
+router.route('/user/list')
+    .get(userController.listUser);
+
 //*------------------------------------------------------------------*/
 // * Like Routes
 //*------------------------------------------------------------------*/

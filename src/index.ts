@@ -1,12 +1,11 @@
 import './database';
 
-
 import app from './app';
 import { field, sep, title } from './config/fmt';
 
 
 (async () => {
-  
+
   const server = await app.listen(app.get('port'));
   sep();
   title(`{${app.get('pkg').name}} - ${app.get('pkg').description}`);
