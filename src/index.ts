@@ -1,7 +1,5 @@
 import './database';
 
-import fs from 'fs-extra';
-import path from 'path';
 
 import app from './app';
 import { field, sep, title } from './config/fmt';
