@@ -3,7 +3,7 @@ import { FilterQuery, isValidObjectId, QueryOptions, UpdateQuery } from "mongoos
 import { LikeModel, ILike } from "../models/like";
 
 export function toogleLike({ query, body }: Request, res: Response) {
-    if (!isValidObjectId(query?.post) || !isValidObjectId(query?.user))
+    if (!query?.post || !query?.user)
         return res.status(400).send({ message: 'Client has not sent query' });
 
     const post = query.post as any;
