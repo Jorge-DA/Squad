@@ -40,17 +40,20 @@ export async function savePost({ user, body, file }: Request, res: Response) {
     });
 }
 
-export function listPostPage({ params, query }: Request, res: Response) {
-    const page = Number(params.page);
+export function listPostPage({ query }: Request, res: Response) {
+    const page = Number(query.page);
     if (page < 1) return res.status(400).send({ message: 'Client has not sent params' });
 
     const find = PostModel.find()
         .skip(config.LIMIT.POST * (page - 1))
         .limit(config.LIMIT.POST)
-        .sort(['updatedAt', 'createdAt'])
+        .sort({ updatedAt: 1, createdAt: 1 })
         .populate([{
             path: 'author',
             select: ['nickname', 'image'],
+        }, {
+            path: 'tags',
+            select: 'name',
         }]);
 
     const search = PostModel.find();
