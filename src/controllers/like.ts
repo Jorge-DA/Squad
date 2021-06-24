@@ -9,7 +9,7 @@ export function toogleLike({ query }: Request, res: Response) {
     const post = query.post as any;
     const user = query.user as any;
     const filter: FilterQuery<ILike> = { post, user, };
-    const update: UpdateQuery<ILike> = { post, user, toogle: !query?.toogle, }
+    const update: UpdateQuery<ILike> = { post, user, toogle: !Boolean(query?.toogle), }
     const options: QueryOptions = { upsert: true, }
     LikeModel.findOneAndUpdate(filter, update, options)
         .select(['toogle'])
