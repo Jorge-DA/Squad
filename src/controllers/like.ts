@@ -21,7 +21,7 @@ export function toogleLike({ query, body }: Request, res: Response) {
 }
 
 export function getLike({ query }: Request, res: Response) {
-    if (!isValidObjectId(query?.post) || !isValidObjectId(query?.user))
+    if (!query?.post || !query?.user)
         return res.status(400).send({ message: 'Client has not sent query' });
 
     LikeModel.findOne()
