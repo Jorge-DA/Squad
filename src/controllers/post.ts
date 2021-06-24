@@ -51,9 +51,6 @@ export function listPostPage({ params, query }: Request, res: Response) {
         .populate([{
             path: 'author',
             select: ['nickname', 'image'],
-        }, {
-            path: 'tags',
-            select: 'name',
         }]);
 
     const search = PostModel.find();
