@@ -63,4 +63,8 @@ LikeSchema.index({ post: 1, user: 1 }, { unique: true });
 
 export const LikeModel = model<ILike, ILikeModel>('Like', LikeSchema);
 
-LikeModel.createIndexes();
+try {
+    LikeModel.createIndexes();
+} catch {
+    
+}

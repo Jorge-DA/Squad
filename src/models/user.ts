@@ -107,4 +107,8 @@ userSchema.methods.roleIncludes = roleIncludes;
 
 export const UserModel = model<IUser, IUserModel>('User', userSchema);
 
-UserModel.createIndexes();
+try {
+    UserModel.createIndexes();
+} catch {
+    
+}

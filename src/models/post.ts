@@ -59,4 +59,8 @@ const PostSchema = new Schema<IPost, IPostModel>({
 
 export const PostModel = model<IPost>('Post', PostSchema);
 
-PostModel.createIndexes();
+try {
+    PostModel.createIndexes();
+} catch {
+    
+}

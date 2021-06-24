@@ -27,4 +27,8 @@ const tagSchema = new Schema<ITag, ITagModel>({
 
 export const TagModel = model<ITag, ITagModel>('Tag', tagSchema);
 
-TagModel.createIndexes();
+try {
+    TagModel.createIndexes();
+} catch {
+    
+}
