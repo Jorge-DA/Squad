@@ -84,11 +84,62 @@ export function listPostPage({ query }: Request, res: Response) {
 
 export function listPostTrends({ }: Request, res: Response) {
     LikeModel.aggregate([{
-        $group: {
-            _id: '$post',
-            views: {
-                $sum: 1
-            },
+        $match: {
+            toogle: true
         }
-    }]).exec();
+    }, {
+        $group: {
+            _id: "$post",
+            count: {
+                $sum: 1
+            }
+        }
+    }, {
+        $lookup: {
+            from: 'posts',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'post'
+        }
+    }, {
+        $unwind: {
+            path: "$post"
+        }
+    }, {
+        $lookup: {
+            from: 'users',
+            localField: 'post.author',
+            foreignField: '_id',
+            as: 'author'
+        }
+    }, {
+        $lookup: {
+            from: 'tags',
+            localField: 'post.tags',
+            foreignField: '_id',
+            as: 'tags'
+        }
+    }, {
+        $unwind: {
+            path: "$author",
+        }
+    }, {
+        $project: {
+            _id: "$post._id",
+            image: "$post.image",
+            count: 1,
+            tags: 1,
+            "author.nickname": 1,
+        }
+    }, {
+        $sort: {
+            count: -1
+        }
+    }, {
+        $limit: config.LIMIT.POST
+    }]).exec((err, data) => {
+        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
+        if (!data) return res.status(204).send({ message: 'Saved and is not returning any content' });
+        return res.status(200).send({ data });
+    });
 }
