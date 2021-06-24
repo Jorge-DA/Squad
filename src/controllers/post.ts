@@ -143,3 +143,7 @@ export function listPostTrends({ }: Request, res: Response) {
         return res.status(200).send({ data });
     });
 }
+
+export function deletePost({ params }: Request, res: Response) {
+
+}
