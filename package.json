@@ -11,19 +11,20 @@
     },
     "keywords": [],
     "author": {
-        "name": "Cétr!co.Productions",
-        "email": "p.roch@outlook.es"
+        "name": "Daniel_Hdz",
+        "email": "dani2203q@gmail.com"
     },
     "contributors": [
         {
-            "name": "Cétr!co.Productions",
-            "email": "p.roch@outlook.es"
+            "name": "JorgeJavier_Viveros",
+            "email": "jjgybrr@gmail.com"
         }
     ],
     "deprecated": false,
     "license": "ISC",
     "dependencies": {
         "bcryptjs": "^2.4.3",
+        "bootstrap": "^5.0.2",
         "cloudinary": "^1.26.1",
         "cors": "^2.8.5",
         "dayjs": "^1.10.5",
