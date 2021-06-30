@@ -144,6 +144,15 @@ export function listPostTrends({ }: Request, res: Response) {
     });
 }
 
-export function deletePost({ params }: Request, res: Response) {
+export function deletePost({ query }: Request, res: Response) {
+    if (!query.id)
+        return res.status(400).send({ message: "Client has not sent params" });
 
+    PostModel.findOneAndDelete({ _id: query.id }, {}, (err, data) => {
+        if (err) return res.status(409).send({ message: "Internal error, probably error with params" });
+        if (!data) return res.status(404).send({ message: "Document not found" });
+
+
+        return res.status(200).send({ data });
+    });
 }

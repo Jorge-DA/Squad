@@ -42,7 +42,8 @@ router.route('/like')
 
 router.route('/post')
     .post(postController.savePost)
-    .get(postController.listPostPage);
+    .get(postController.listPostPage)
+    .delete(postController.deletePost);
 
 router.route('/post/trends')
     .get(postController.listPostTrends);
