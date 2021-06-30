@@ -29,6 +29,6 @@ export const config = {
     },
     LIMIT: {
         TAG: 10,
-        POST: 10,
+        POST: 12,
     }
 } as const;

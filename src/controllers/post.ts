@@ -44,12 +44,12 @@ export function listPostPage({ query }: Request, res: Response) {
     const page = !isNaN(Number(query.page)) ? Number(query.page) : 1;
 
     const find = PostModel.find()
+        .sort({ updatedAt: -1, createdAt: -1 })
         .skip(config.LIMIT.POST * (page - 1))
         .limit(config.LIMIT.POST)
-        .sort({ updatedAt: -1, createdAt: -1 })
         .populate([{
             path: 'author',
-            select: ['nickname', 'image'],
+            select: ['nickname'],
         }, {
             path: 'tags',
             select: 'name',
@@ -81,7 +81,9 @@ export function listPostPage({ query }: Request, res: Response) {
     });
 }
 
-export function listPostTrends({ }: Request, res: Response) {
+export function listPostTrends({ query }: Request, res: Response) {
+    const page = !isNaN(Number(query.page)) ? Number(query.page) : 1;
+
     LikeModel.aggregate([{
         $match: {
             toogle: true
@@ -132,10 +134,10 @@ export function listPostTrends({ }: Request, res: Response) {
         }
     }, {
         $sort: {
-            count: -1
+            count: -1,
         }
     }, {
-        $limit: config.LIMIT.POST
+        $limit: config.LIMIT.POST,
     }]).exec((err, data) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!data) return res.status(204).send({ message: 'Saved and is not returning any content' });
