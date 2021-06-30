@@ -47,7 +47,7 @@ export function listPostPage({ query }: Request, res: Response) {
     const find = PostModel.find()
         .skip(config.LIMIT.POST * (page - 1))
         .limit(config.LIMIT.POST)
-        .sort({ updatedAt: 1, createdAt: 1 })
+        .sort({ updatedAt: -1, createdAt: -1 })
         .populate([{
             path: 'author',
             select: ['nickname', 'image'],
