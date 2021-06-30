@@ -20,12 +20,12 @@ export function toogleLike({ body }: Request, res: Response) {
         });
 }
 
-export function getLike({ body }: Request, res: Response) {
-    if (!body?.post || !body?.user)
+export function getLike({ query }: Request, res: Response) {
+    if (!query?.post || !query?.user)
         return res.status(400).send({ message: 'Client has not sent body' });
 
     LikeModel.findOne()
-        .where({ post: body.post, user: body.user })
+        .where({ post: query.post, user: query.user })
         .select(['toogle'])
         .exec((err, Like) => {
             if (err) return res.status(409).send({ message: 'Internal error, probably error with body' });
