@@ -41,8 +41,7 @@ export async function savePost({ user, body, file }: Request, res: Response) {
 }
 
 export function listPostPage({ query }: Request, res: Response) {
-    const page = Number(query.page);
-    if (page < 1) return res.status(400).send({ message: 'Client has not sent params' });
+    const page = !isNaN(Number(query.page)) ? Number(query.page) : 1;
 
     const find = PostModel.find()
         .skip(config.LIMIT.POST * (page - 1))
