@@ -21,9 +21,8 @@ export function listTag(req: Request, res: Response) {
     });
 }
 
-export function listTagPage({ params }: Request, res: Response) {
-    const page = Number(params.page);
-    if (page < 1) return res.status(400).send({ message: 'Client has not sent params' });
+export function listTagPage({ query }: Request, res: Response) {
+    const page = !isNaN(Number(query.page)) ? Number(query.page) : 1;
 
     TagModel.find()
         .skip(config.LIMIT.TAG * (page - 1))
