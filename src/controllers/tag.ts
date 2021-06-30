@@ -21,8 +21,8 @@ export function listTag(req: Request, res: Response) {
     });
 }
 
-export function listTagPage({ query }: Request, res: Response) {
-    const page = !isNaN(Number(query.page)) ? Number(query.page) : 1;
+export function listTagPage({ params }: Request, res: Response) {
+    const page = !isNaN(Number(params.page)) ? Number(params.page) : 1;
 
     TagModel.find()
         .skip(config.LIMIT.TAG * (page - 1))
