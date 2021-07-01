@@ -140,7 +140,7 @@ export function listPostTrends({ query }: Request, res: Response) {
         $limit: config.LIMIT.POST,
     }]).exec((err, data) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!data) return res.status(204).send({ message: 'Saved and is not returning any content' });
+        if (!data) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data });
     });
 }
@@ -149,11 +149,18 @@ export function deletePost({ query }: Request, res: Response) {
     if (!query.id)
         return res.status(400).send({ message: "Client has not sent params" });
 
-    PostModel.findOneAndDelete({ _id: query.id }, {}, (err, data) => {
+    PostModel.findOneAndDelete({ _id: query.id }, {}, async (err, post) => {
         if (err) return res.status(409).send({ message: "Internal error, probably error with params" });
-        if (!data) return res.status(404).send({ message: "Document not found" });
-
-
-        return res.status(200).send({ data });
+        if (!post) return res.status(404).send({ message: "Document not found" });
+        try {
+            await v2.uploader.destroy(post.image.public_id);
+        } catch {
+            if (err) return res.status(409).send({ message: "Internal error, probably error with params" });
+        }
+        LikeModel.deleteMany({ post: post._id }).exec((err, data) => {
+            if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
+            if (!data) return res.status(404).send({ message: 'Document not found' });
+            return res.status(200).send({ data: post });
+        });
     });
 }
