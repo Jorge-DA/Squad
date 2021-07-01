@@ -11,9 +11,9 @@ export function intoRole(roles: string[]): number {
 }
 
 export function hasValidRoles(roles: string | string[]): boolean {
-    if (Array.isArray(roles) && !!roles.length)
+    if (Array.isArray(roles) && !!roles?.length)
         return roles.every(r => Object.keys(configAuth).includes(r));
-    else if (!Array.isArray(roles) && !!roles.trim())
+    else if (!Array.isArray(roles) && !!roles?.trim())
         return Object.keys(configAuth).includes(roles);
     else
         return false;

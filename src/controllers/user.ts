@@ -18,9 +18,9 @@ export async function registerUser({ body, file }: Request, res: Response) {
 
     if (!body) return res.status(400).send({ message: 'Client has not sent params' });
 
-    if (!hasValidRoles(body?.roles))
+    if (!hasValidRoles(body?.roles) && body?.roles)
         return res.status(400).send({ message: 'Roles bundle not supported' });
-    else
+    else if (body?.roles)
         body.role = intoRole(body.roles);
 
     if (file) try {
@@ -32,6 +32,7 @@ export async function registerUser({ body, file }: Request, res: Response) {
 
     const newUser = new UserModel(body);
     newUser.save(async (err, userStored: IUser) => {
+        console.log("🚀 ~ file: user.ts ~ line 35 ~ newUser.save ~ err", err)
         if (file) try {
             if (err || !userStored) await v2.uploader.destroy(result.public_id);
             await unlink(file.path);
