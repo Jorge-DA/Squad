@@ -16,10 +16,10 @@ v2.config({
 export async function registerUser({ body, file }: Request, res: Response) {
     let result: UploadApiResponse;
 
-    if (!body) return res.status(400).send({ message: 'Client has not sent params' });
+    if (!body) return res.status(400).send({ message: 'El cliente no ha enviado parámetros' });
 
     if (!hasValidRoles(body?.roles) && body?.roles)
-        return res.status(400).send({ message: 'Roles bundle not supported' });
+        return res.status(400).send({ message: 'Paquete de roles no compatible' });
     else if (body?.roles)
         body.role = intoRole(body.roles);
 
@@ -27,7 +27,7 @@ export async function registerUser({ body, file }: Request, res: Response) {
         result = await v2.uploader.upload(file.path, { folder: 'blog/users' });
         body.image = <IImage>{ public_id: result.public_id, url: result.secure_url, }
     } catch {
-        return res.status(409).send({ message: 'Internal error, probably error with params' });
+        return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
     }
 
     const newUser = new UserModel(body);
@@ -38,9 +38,9 @@ export async function registerUser({ body, file }: Request, res: Response) {
             await unlink(file.path);
         } catch {
             await unlink(file.path);
-            return res.status(409).send({ message: 'Internal error, probably error with params' });
+            return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
         }
-        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
+        if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
         if (!userStored) return res.status(204).send({ message: 'Saved and is not returning any content' });
         delete userStored.password;
         return res.status(200).send({ token: userStored.createToken() });
@@ -48,14 +48,14 @@ export async function registerUser({ body, file }: Request, res: Response) {
 }
 
 export function loginUser({ body }: Request, res: Response) {
-    if (!body) return res.status(400).send({ message: 'Client has not sent params' });
+    if (!body) return res.status(400).send({ message: 'El cliente no ha enviado parámetros' });
     const { nickname, password } = <IUser>body;
     UserModel.findOne({ nickname })
         .select('-image')
         .exec((err, user) => {
-            if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-            if (!user) return res.status(404).send({ message: 'Document not found' });
-            if (!user.comparePassword(<string>password)) return res.status(401).send({ message: 'Unauthorized' });
+            if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+            if (!user) return res.status(404).send({ message: 'Documento no encontrado' });
+            if (!user.comparePassword(<string>password)) return res.status(401).send({ message: 'No autorizado' });
 
             delete user.password;
             console.log("🚀 ~ file: user.ts ~ line 134 ~ .exec ~ user", user)
@@ -68,8 +68,8 @@ export function returnUser({ user, query }: Request, res: Response) {
         UserModel.findOne({ nickname: <string>query.nickname })
             .select(['-password', '-__v'])
             .exec((err, data) => {
-                if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-                if (!data) return res.status(404).send({ message: 'Document not found' });
+                if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+                if (!data) return res.status(404).send({ message: 'Documento no encontrado' });
                 const user = data.toObject();
                 const identifier = user._id;
                 const roles = intoRoles(<number>user.role);
@@ -93,19 +93,19 @@ export function returnUser({ user, query }: Request, res: Response) {
             roles,
         });
     } else
-        return res.status(400).send({ message: 'User failed to pass authentication' });
+        return res.status(400).send({ message: 'El usuario no pudo pasar la autenticación' });
 }
 
 export function returnAuths({ user }: Request, res: Response) {
-    if (!user) return res.status(400).send({ message: 'User failed to pass authentication' });
+    if (!user) return res.status(400).send({ message: 'El usuario no pudo pasar la autenticación' });
     const configAuth: { [AUTH: string]: number } = config.AUTH;
     return res.status(200).send({ data: Object.keys(configAuth) });
 }
 
 export function listUser({ }: Request, res: Response) {
     UserModel.find().exec((err, user) => {
-        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!user) return res.status(404).send({ message: 'Document not found' });
+        if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+        if (!user) return res.status(404).send({ message: 'Documento no encontrado' });
         return res.status(200).send({ data: user.map(({ _id, nickname, role }) => ({ identifier: _id, nickname, roles: intoRoles(<number>role) })) });
     });
 }

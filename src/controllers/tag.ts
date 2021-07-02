@@ -4,10 +4,10 @@ import { TagModel } from '../models/tag';
 import { config } from '../config/config';
 
 export function saveTag({ body }: Request, res: Response) {
-    if (!body) return res.status(400).send({ message: 'Client has not sent params' });
+    if (!body) return res.status(400).send({ message: 'El cliente no ha enviado parámetros' });
     const newTag = new TagModel(body);
     newTag.save((err, tagStored) => {
-        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
+        if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
         if (!tagStored) return res.status(204).send({ message: 'Saved and is not returning any content' });
         return res.status(200).send({ data: tagStored });
     });
@@ -15,8 +15,8 @@ export function saveTag({ body }: Request, res: Response) {
 
 export function listTag(req: Request, res: Response) {
     TagModel.find().sort('name').select('name').exec((err, tag) => {
-        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!tag) return res.status(404).send({ message: 'Document not found' });
+        if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+        if (!tag) return res.status(404).send({ message: 'Documento no encontrado' });
         return res.status(200).send({ data: tag });
     });
 }
@@ -30,8 +30,8 @@ export function listTagPage({ params }: Request, res: Response) {
         .sort('name')
         .select('name')
         .exec(async (err, data) => {
-            if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-            if (!data) return res.status(404).send({ message: 'Document not found' });
+            if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+            if (!data) return res.status(404).send({ message: 'Documento no encontrado' });
 
             const totalDocs = await TagModel.countDocuments();
             const totalPages = Math.ceil(totalDocs / config.LIMIT.TAG);

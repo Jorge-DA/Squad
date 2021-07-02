@@ -17,13 +17,11 @@ v2.config({
 export async function savePost({ user, body, file }: Request, res: Response) {
     let result: UploadApiResponse;
 
-    // if (!body || !user?.roleIncludes(['WRITE', 'EDIT', 'GRANT', 'ADMIN']))
-    //     return res.status(400).send({ message: 'Client has not sent params' });
     if (file) try {
         result = await v2.uploader.upload(file.path, { folder: 'blog/posts' });
         body.image = <IImage>{ public_id: result.public_id, url: result.secure_url, }
     } catch {
-        return res.status(409).send({ message: 'Internal error, probably error with params' });
+        return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
     }
     const newPost = new PostModel(body);
     newPost.save(async (err, data) => {
@@ -32,10 +30,10 @@ export async function savePost({ user, body, file }: Request, res: Response) {
             await unlink(file.path);
         } catch {
             await unlink(file.path);
-            return res.status(409).send({ message: 'Internal error, probably error with params' });
+            return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
         }
-        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!data) return res.status(204).send({ message: 'Saved and is not returning any content' });
+        if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+        if (!data) return res.status(204).send({ message: 'Guardado y no devuelve ningún contenido' });
         return res.status(200).send({ data });
     });
 }
@@ -60,8 +58,8 @@ export function listPostPage({ query }: Request, res: Response) {
         search.where('tags').all(query.tags as string[]);
 
     find.merge(search).exec(async (err, data) => {
-        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!data) return res.status(404).send({ message: 'Document not found' });
+        if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+        if (!data) return res.status(404).send({ message: 'Documento no encontrado' });
 
         const totalDocs = await PostModel.countDocuments().merge(search);
         const totalPages = Math.ceil(totalDocs / config.LIMIT.POST);
@@ -139,8 +137,8 @@ export function listPostTrends({ query }: Request, res: Response) {
     }, {
         $limit: config.LIMIT.POST,
     }]).exec((err, data) => {
-        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!data) return res.status(404).send({ message: 'Document not found' });
+        if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+        if (!data) return res.status(404).send({ message: 'Documento no encontrado' });
         return res.status(200).send({ data });
     });
 }
@@ -150,16 +148,16 @@ export function deletePost({ query }: Request, res: Response) {
         return res.status(400).send({ message: "Client has not sent params" });
 
     PostModel.findOneAndDelete({ _id: query.id }, {}, async (err, post) => {
-        if (err) return res.status(409).send({ message: "Internal error, probably error with params" });
-        if (!post) return res.status(404).send({ message: "Document not found" });
+        if (err) return res.status(409).send({ message: "Error interno, probablemente error con los parámetros" });
+        if (!post) return res.status(404).send({ message: "Documento no encontrado" });
         try {
             await v2.uploader.destroy(post.image.public_id);
         } catch {
-            if (err) return res.status(409).send({ message: "Internal error, probably error with params" });
+            if (err) return res.status(409).send({ message: "Error interno, probablemente error con los parámetros" });
         }
         LikeModel.deleteMany({ post: post._id }).exec((err, data) => {
-            if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-            if (!data) return res.status(404).send({ message: 'Document not found' });
+            if (err) return res.status(409).send({ message: 'Error interno, probablemente error con los parámetros' });
+            if (!data) return res.status(404).send({ message: 'Documento no encontrado' });
             return res.status(200).send({ data: post });
         });
     });
